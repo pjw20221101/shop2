@@ -63,6 +63,7 @@ public class CartService {
         List<CartDetailDto> cartDetailDtoList = new ArrayList<>();
 
         Member member = memberRepository.findByEmail(email);
+        
         Cart cart = cartRepository.findByMemberId(member.getId());
         if(cart == null){
             return cartDetailDtoList;
@@ -79,6 +80,8 @@ public class CartService {
                 .orElseThrow(EntityNotFoundException::new);
         Member savedMember = cartItem.getCart().getMember();
 
+        // curMember.getEmail() : 뷰에서  로그인한 계정을 DB에서 가져옴 
+        // savedMember.getEmail() : cartItemID를 조회해서 cart 테이블의 Member의 ID 값 
         if(!StringUtils.equals(curMember.getEmail(), savedMember.getEmail())){
             return false;
         }
@@ -114,6 +117,8 @@ public class CartService {
         }
 
         Long orderId = orderService.orders(orderDtoList, email);
+        
+        
         for (CartOrderDto cartOrderDto : cartOrderDtoList) {
             CartItem cartItem = cartItemRepository
                             .findById(cartOrderDto.getCartItemId())

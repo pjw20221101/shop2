@@ -20,6 +20,15 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    	
+    	// 클라이언트에게 보내는 변수와 값을 처리하기위한 인증 블락. 
+    	// ajax, javascript의 window.open, API 통신시 csrf 설정이 완료되어야 한다.
+    	// csrf를 전체를 비활성화 하는 방법 
+ //    	http.csrf().disable(); 
+    	
+    	//특정 경로에서 접근하는 것은 csrf를 적용받지 않도록 설정 
+//    	http.csrf().ignoringRequestMatchers(new AntPathRequestMatcher("/h2-console/**")); 
+    	
         http.formLogin()
                 .loginPage("/members/login")
                 .defaultSuccessUrl("/")

@@ -1,11 +1,18 @@
+// querydsl 추가
+buildscript {
+    ext {
+        queryDslVersion = "5.0.0"
+    }
+}
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.9'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 	
-	//Querydsl Start
-	// id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
-	//Querydsl End
+  //querydsl 추가
+  id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+  
 }
 
 group = 'com.shop'
@@ -48,11 +55,15 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	
 	// QueryDSL
-
+	  //querydsl 추가
+  implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+  annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}"
+	
+/*
    implementation 'com.querydsl:querydsl-jpa:5.0.0'
    implementation 'com.querydsl:querydsl-apt:5.0.0'
    implementation 'com.querydsl:querydsl-core:5.0.0' 
-
+*/
 	//oracle 라이브러리 
 	//implementation 'com.oracle.database.jdbc:ojdbc10'
 	implementation 'com.oracle.database.jdbc:ojdbc11'
@@ -116,10 +127,30 @@ compileQuerydsl {
 }
 
 */
-
 	
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+
+//querydsl 추가 시작
+def querydslDir = "$buildDir/generated/querydsl"
+//def querydslDir = "src/generated/querydsl"
+querydsl {
+    jpa = true
+    querydslSourcesDir = querydslDir
+}
+
+sourceSets {
+    main.java.srcDir querydslDir
+}
+
+configurations {
+    querydsl.extendsFrom compileClasspath
+}
+
+compileQuerydsl {
+    options.annotationProcessorPath = configurations.querydsl
 }

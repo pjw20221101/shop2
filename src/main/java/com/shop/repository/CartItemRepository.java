@@ -13,6 +13,10 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long> {
 
     CartItem findByCartIdAndItemId(Long cartId, Long itemId);
 
+    
+    // JPQL : Native Query를 사용 . 
+    // Query Dsl 
+    
     @Query("select new com.shop.dto.CartDetailDto(ci.id, i.itemNm, i.price, ci.count, im.imgUrl) " +
             "from CartItem ci, ItemImg im " +
             "join ci.item i " +

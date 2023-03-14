@@ -67,6 +67,7 @@ public class CartController {
         return "cart/cartList";
     }
 
+    //@PatchMapping : 수정, 업데이트  
     @PatchMapping(value = "/cartItem/{cartItemId}")
     public @ResponseBody ResponseEntity updateCartItem(@PathVariable("cartItemId") Long cartItemId, int count, Principal principal){
 
@@ -96,6 +97,16 @@ public class CartController {
     public @ResponseBody ResponseEntity orderCartItem(@RequestBody CartOrderDto cartOrderDto, Principal principal){
 
         List<CartOrderDto> cartOrderDtoList = cartOrderDto.getCartOrderDtoList();
+        
+        // client에서 넘기는 order 정보의 내용을 출력 
+//        for ( int i = 0 ; i < cartOrderDtoList.size() ; i++) {
+//        	CartOrderDto cartOrderDto1 = cartOrderDtoList.get(i); 
+//        	
+//        	System.out.println( cartOrderDto1.getCartItemId());
+//        	
+//        }
+        	
+        
 
         if(cartOrderDtoList == null || cartOrderDtoList.size() == 0){
             return new ResponseEntity<String>("주문할 상품을 선택해주세요", HttpStatus.FORBIDDEN);
