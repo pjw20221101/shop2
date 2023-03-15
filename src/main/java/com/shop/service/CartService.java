@@ -39,18 +39,21 @@ public class CartService {
                 .orElseThrow(EntityNotFoundException::new);
         Member member = memberRepository.findByEmail(email);
 
+        //기존의 주문정보가 존재하는지 
         Cart cart = cartRepository.findByMemberId(member.getId());
+        //기존 주문정보가 없으면 cart 테이블에 주문자 정보를 저장 
         if(cart == null){
             cart = Cart.createCart(member);
             cartRepository.save(cart);
         }
-
+        
+        // 기존에 장바구니에 등록하는 제품이 cartItem 테이블에 존재하는지 확인         
         CartItem savedCartItem = cartItemRepository.findByCartIdAndItemId(cart.getId(), item.getId());
 
-        if(savedCartItem != null){
+        if(savedCartItem != null){   //기존에 제품이 장바구니에 존재하면 count (갯수)만 update
             savedCartItem.addCount(cartItemDto.getCount());
             return savedCartItem.getId();
-        } else {
+        } else {		// 기존에 제품이 장바구니에 존재하지 않으면 전체를 update
             CartItem cartItem = CartItem.createCartItem(cart, item, cartItemDto.getCount());
             cartItemRepository.save(cartItem);
             return cartItem.getId();
@@ -103,22 +106,30 @@ public class CartService {
     }
 
     public Long orderCartItem(List<CartOrderDto> cartOrderDtoList, String email){
+    	
+    	//List 선언 
         List<OrderDto> orderDtoList = new ArrayList<>();
 
+        //Client 에서 넘오는 리스트안에 저장된 CertItemID를 끄집어내서        
+        
         for (CartOrderDto cartOrderDto : cartOrderDtoList) {
             CartItem cartItem = cartItemRepository
                             .findById(cartOrderDto.getCartItemId())
                             .orElseThrow(EntityNotFoundException::new);
 
+            //장바구니 아이템 테이블의 정보를 끄집어 내서 order 테이블에 저장하기위해서 
+            // orderDto 제품번호, 주문한 갯수 정보만 넣어서 orderDtoList에 저장 
             OrderDto orderDto = new OrderDto();
             orderDto.setItemId(cartItem.getItem().getId());
             orderDto.setCount(cartItem.getCount());
             orderDtoList.add(orderDto);
         }
 
+        
+        //cert_item 테이블의 값을 order, order_item에 값을 Insert 
         Long orderId = orderService.orders(orderDtoList, email);
         
-        
+        // cert_item 테이블의 선택된 itemId의 대해서 제거 
         for (CartOrderDto cartOrderDto : cartOrderDtoList) {
             CartItem cartItem = cartItemRepository
                             .findById(cartOrderDto.getCartItemId())

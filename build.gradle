@@ -136,8 +136,8 @@ tasks.named('test') {
 
 
 //querydsl 추가 시작
-def querydslDir = "$buildDir/generated/querydsl"
-//def querydslDir = "src/generated/querydsl"
+//def querydslDir = "$buildDir/generated/querydsl"
+def querydslDir = "src/generated/querydsl"
 querydsl {
     jpa = true
     querydslSourcesDir = querydslDir

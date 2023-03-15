@@ -99,6 +99,8 @@ public class OrderService {
     public Long orders(List<OrderDto> orderDtoList, String email){
 
         Member member = memberRepository.findByEmail(email);
+        
+        //orderItemList 선언 : Order : order_item 
         List<OrderItem> orderItemList = new ArrayList<>();
 
         for (OrderDto orderDto : orderDtoList) {
